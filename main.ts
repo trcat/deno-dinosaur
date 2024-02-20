@@ -1,3 +1,5 @@
+/// <reference lib="deno.unstable" />
+
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 import { oakCors } from "https://deno.land/x/cors/mod.ts";
 import data from "./data.json" assert { type: "json" };
