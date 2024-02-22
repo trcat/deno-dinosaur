@@ -1,0 +1,6 @@
+{
+  "unstable": ["kv"],
+  "tasks": {
+    "start": "deno run -A --unstable main.ts"
+  }
+}
