@@ -8,7 +8,7 @@ app.use(
   "/todo/*",
   cors({
     origin: (origin: string) => {
-      return origin.indexOf("trcat.github.io") ? origin : 'http://localhost:5173/'
+      return origin.indexOf("https://trcat.github.io/") ? origin : 'http://localhost:5173/'
     },
   })
 )
