@@ -1,19 +1,28 @@
-import { Hono } from "https://deno.land/x/hono@v3.4.1/mod.ts"
-
+/// <reference lib="deno.unstable" />
+import { Hono, type Context } from "https://deno.land/x/hono/mod.ts"
+import { cors } from "https://deno.land/x/hono/middleware.ts"
 import data from "./data.json" assert { type: "json" }
 
 const app = new Hono()
+app.use(
+  "/todo/*",
+  cors({
+    origin: (origin: string) => {
+      return origin.indexOf("trcat.github.io") ? origin : 'http://localhost:5173/'
+    },
+  })
+)
 const kv = await Deno.openKv()
 
-app.get("/", (c) => {
+app.get("/", (c: Context) => {
   return c.json("Welcome to dinosaur API!")
 })
 
-app.get("/api", (c) => {
+app.get("/api", (c: Context) => {
   return c.json(data)
 })
 
-app.get("/api/:dinosaur", (c) => {
+app.get("/api/:dinosaur", (c: Context) => {
   const dinosaur = c.req.param("dinosaur")
 
   if (dinosaur) {
@@ -33,18 +42,17 @@ app.get("/api/:dinosaur", (c) => {
 /**
  * 获取所有待办事项
  */
-app.get("/todo", async (c) => {
+app.get("/todo", async (c: Context) => {
   const iter = await kv.list({ prefix: ["todo"] })
   const todo = []
   for await (const res of iter) todo.push(res)
-
   return c.json(todo)
 })
 
 /**
  * 创建待办事项
  */
-app.post("/todo", async (c) => {
+app.post("/todo", async (c: Context) => {
   const body = await c.req.json()
   const id = `todo_${Date.now()}`
   const result = await kv.set(["todo", id], Object.assign(body, { id }))
@@ -54,7 +62,7 @@ app.post("/todo", async (c) => {
 /**
  * 修改待办事项
  */
-app.put("/todo/:id", async (c) => {
+app.put("/todo/:id", async (c: Context) => {
   const id = c.req.param("id")
   const result = await kv.set(["todo", id], await c.req.json())
   return c.json(result)
@@ -63,7 +71,7 @@ app.put("/todo/:id", async (c) => {
 /**
  * 删除待办事项
  */
-app.delete("/todo/:id", async (c) => {
+app.delete("/todo/:id", async (c: Context) => {
   const id = c.req.param("id")
   await kv.delete(["todo", id])
   return c.text("删除成功")
