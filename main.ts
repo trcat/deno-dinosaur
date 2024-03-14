@@ -64,7 +64,8 @@ app.post("/todo", async (c: Context) => {
  */
 app.put("/todo/:id", async (c: Context) => {
   const id = c.req.param("id")
-  const result = await kv.set(["todo", id], await c.req.json())
+  const body = await c.req.json()
+  const result = await kv.set(["todo", id], body)
   return c.json(result)
 })
 
@@ -74,7 +75,7 @@ app.put("/todo/:id", async (c: Context) => {
 app.delete("/todo/:id", async (c: Context) => {
   const id = c.req.param("id")
   await kv.delete(["todo", id])
-  return c.text("删除成功")
+  return c.json('删除成功')
 })
 
 Deno.serve(app.fetch)
