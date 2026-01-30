@@ -1,7 +1,7 @@
 /// <reference lib="deno.unstable" />
 import { Hono, type Context } from "https://deno.land/x/hono/mod.ts"
 import { cors } from "https://deno.land/x/hono/middleware.ts"
-import data from "./data.json" assert { type: "json" }
+import data from "./data.json" with { type: "json" }
 
 const app = new Hono()
 app.use(
